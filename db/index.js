@@ -1,26 +1,31 @@
 // Require the Client constructor from the pg package
-
+const { Client } = require('pg');
 // Create a constant, CONNECTION_STRING, from either process.env.DATABASE_URL or postgres://localhost:5432/phenomena-dev
-
+const CONNECTION_STRING = process.env.DATABASE_URL || 'postgres://localhost:5432/phenomena-dev';
 // Create the client using new Client(CONNECTION_STRING)
 // Do not connect to the client in this file!
-
+const client = Client(CONNECTION_STRING)
 /**
  * Report Related Methods
  */
 
 /**
+ * 
  * You should select all reports which are open. 
- *  
+ * 
  * Additionally you should fetch all comments for these
  * reports, and add them to the report objects with a new field, comments.
  * 
  * Lastly, remove the password field from every report before returning them all.
  */
+
 async function getOpenReports() {
   try {
     // first load all of the reports which are open
-    
+    const { rows } = await client.query (`
+    SELECT * FROM reports
+    WHERE "isOpen" = true
+    ;`)
 
     // then load the comments only for those reports, using a
     // WHERE "reportId" IN () clause
