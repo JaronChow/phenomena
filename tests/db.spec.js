@@ -160,6 +160,7 @@ describe('Database', () => {
       it('if it wasnt found, throw an error saying `That report does not exist, no comment has been made`', async () => {
         await expect(createReportComment(500, commentFields)).rejects.toThrow('That report does not exist, no comment has been made');
       });
+      console.log(commentFields.content)
       it('if the current date is past the expiration, throw an error saying `The discussion time on this report has expired, no comment has been made`', async () => {
         await client.query(`
           UPDATE reports

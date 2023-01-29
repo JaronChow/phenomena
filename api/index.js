@@ -1,8 +1,14 @@
 // Build an apiRouter using express Router
-
+const express = require('express');
+const apiRouter = express.Router();
 
 // Import the database adapter functions from the db
-
+const { 
+    getOpenReports, 
+    createReport, 
+    closeReport, 
+    createReportComment, 
+} = require('../db');
 
 /**
  * Set up a GET request for /reports
@@ -13,7 +19,18 @@
  * - on caught error, call next(error)
  */
 
+apiRouter.get ('/reports', async (req,res,next) => {
+    try {
+    const reports = await getOpenReports();
 
+    res.send({
+        reports
+    })
+        
+    } catch(error){
+    next(error);
+    } 
+});
 
 /**
  * Set up a POST request for /reports
@@ -24,8 +41,15 @@
  * - on caught error, call next(error)
  */
 
+apiRouter.post ('/reports', async (req,res,next) => {
+    try {
+        const reportsCreated = await createReport(req.body);
+        res.send(reportsCreated)
 
-
+    } catch(error){
+    next(error);
+    }
+});
 /**
  * Set up a DELETE request for /reports/:reportId
  * 
@@ -36,7 +60,18 @@
  * - on caught error, call next(error)
  */
 
+apiRouter.delete ('/reports/:reportId', async (req,res,next) => {
+    try {
+        const {reportId} = req.params;
+        const {password} = req.body;
+        const closedReport = await closeReport(reportId, password);
 
+        res.send(closedReport)
+
+    } catch(error){
+    next(error);
+    }
+});
 
 /**
  * Set up a POST request for /reports/:reportId/comments
@@ -49,5 +84,18 @@
  */
 
 
+apiRouter.post('/reports/:reportId/comments', async (req,res,next) => {
+    try {
+        const {reportId} = req.params
+        
+        const reportComment = await createReportComment(reportId, req.body);
+
+        res.send(reportComment)
+
+    } catch(error){
+    next(error);
+    }
+});
 
 // Export the apiRouter
+module.exports = apiRouter;

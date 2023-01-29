@@ -153,7 +153,7 @@ async function expireReport(reportId) {
   try {
     const { rows: [report] } = await client.query(`
       UPDATE reports
-      SET "expirationDate" = CURRENT_TIMESTAMP - interval '2 days'
+      SET "expirationDate" = CURRENT_TIMESTAMP - interval '5 days'
       WHERE id=$1
       RETURNING *;
     `, [reportId]);
@@ -184,6 +184,7 @@ async function testDB() {
     console.log("Grabbing all open reports:\n", await getOpenReports());
     
     /* Each of these lines should throw an error when uncommented */
+
     
     // console.log("Closing report with id 1 even though it is closed", await closeReport(1, "51isTheKey"));
     // console.log("Closing report with id 2 with incorrect password", await closeReport(2, "bad password"));
